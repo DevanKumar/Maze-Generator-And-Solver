@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AStarVisualizer
+namespace DiscreteStructuresAE2
 {
     public enum TileStatus
     {

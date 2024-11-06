@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace AStarVisualizer
+namespace DiscreteStructuresAE2
 {
-    public abstract class Sprite
+    internal abstract class Sprite
     {
         public Texture2D Texture;
         public Vector2 Position;

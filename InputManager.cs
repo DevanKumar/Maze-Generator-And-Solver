@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AStarVisualizer
+namespace DiscreteStructuresAE2
 {
-    public static class InputManager
+    internal static class InputManager
     {
         public struct PointNode
         {
@@ -18,6 +18,7 @@ namespace AStarVisualizer
         public static Color NewColor { get; set; }
         public static PointNode StartNode = new PointNode();
         public static PointNode EndNode = new PointNode();
+        public static bool Generated { get; set; }
         public static Vector2 MousePosition()
         {
             return new Vector2(CurrentMouseState.X, CurrentMouseState.Y);

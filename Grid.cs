@@ -4,53 +4,58 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AStarVisualizer
+namespace DiscreteStructuresAE2
 {
-    class Grid
+    internal class Grid
     { 
-        Tile[,] grid;
-        Vector2 offset;
+        public Tile[,] Board { get; private set; }
+        public Vector2 Offset { get; private set; }
+        public Vector2 TileSize { get; private set; }
         public Grid(int width, int height, Texture2D texture, Vector2 offset, Vector2 scale)
         {
-            grid = new Tile[width, height];
-            this.offset = offset;
-            for(int row = 0; row < grid.GetLength(0); row++)
+            Board = new Tile[width, height];
+            Offset = offset;
+            TileSize = scale;
+            for(int col = 0; col < Board.GetLength(0); col++)
             {
-                for(int col = 0; col < grid.GetLength(1); col++)
+                for(int row = 0; row < Board.GetLength(1); row++)
                 {
-                    grid[row, col] = new Tile(texture, new Vector2(scale.X * row, scale.Y * col), Color.White, scale);
+                    Board[col, row] = new Tile(texture, new Vector2(scale.X * col, scale.Y * row), Color.White, scale);
                 }
             }
         }
         public void Update()
         {
-            for (int row = 0; row < grid.GetLength(0); row++)
+            for (int col = 0; col < Board.GetLength(0); col++)
             {
-                for (int col = 0; col < grid.GetLength(1); col++)
+                for (int row = 0; row < Board.GetLength(1); row++)
                 {
                     if (!(InputManager.EndNode.Created && InputManager.NewColor == Color.Red) && !(InputManager.StartNode.Created && InputManager.NewColor == Color.LimeGreen))
                     {
-                        grid[row, col].Update(offset, InputManager.NewColor, new Vector2(row, col));
+                        Board[col, row].Update(Offset, InputManager.NewColor, new Vector2(col, row));
+                        InputManager.Generated = false;
                     }
                 }
             }
-            if (grid[(int)InputManager.StartNode.Position.X, (int)InputManager.StartNode.Position.Y].Color != Color.LimeGreen)
+            if (Board[(int)InputManager.StartNode.Position.X, (int)InputManager.StartNode.Position.Y].Color != Color.LimeGreen)
             {
                 InputManager.StartNode.Created = false;
+                InputManager.Generated = false;
             }
-            if (grid[(int)InputManager.EndNode.Position.X, (int)InputManager.EndNode.Position.Y].Color != Color.Red)
+            if (Board[(int)InputManager.EndNode.Position.X, (int)InputManager.EndNode.Position.Y].Color != Color.Red)
             {   
                 InputManager.EndNode.Created = false;
+                InputManager.Generated = false;
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int row = 0; row < grid.GetLength(0); row++)
+            for (int row = 0; row < Board.GetLength(0); row++)
             {
-                for (int col = 0; col < grid.GetLength(1); col++)
+                for (int col = 0; col < Board.GetLength(1); col++)
                 {
-                    spriteBatch.Draw(grid[row,col].Texture, new Vector2((int) (offset.X + (grid[row, col].Texture.Width * grid[row, col].Scale.X) * row), (int) (offset.Y + (grid[row, col].Texture.Height * grid[row, col].Scale.Y) * col)),  null, grid[row,col].Color, 0f, Vector2.Zero, grid[row, col].Scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Board[row,col].Texture, new Vector2((int) (Offset.X + (Board[row, col].Texture.Width * Board[row, col].Scale.X) * row), (int) (Offset.Y + (Board[row, col].Texture.Height * Board[row, col].Scale.Y) * col)),  null, Board[row,col].Color, 0f, Vector2.Zero, Board[row, col].Scale, SpriteEffects.None, 0f);
                 }
             }
         }

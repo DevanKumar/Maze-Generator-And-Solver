@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace AStarVisualizer
+namespace DiscreteStructuresAE2
 {
-    public class Tile : Sprite
+    internal class Tile : Sprite
     {
         TileStatus Status;
         public Tile(Texture2D texture, Vector2 position, Color color, Vector2 scale) : base(texture, position, color, scale, 0)
@@ -42,7 +42,7 @@ namespace AStarVisualizer
                 Status = TileStatus.CLEAR;
             }
         }
-        public Point GetPosition(int width, int height) => new Point((int) Position.X % width, (int) Position.Y / height);
+        public Point GetPosition(int width, int height) => new Point((int) Position.X / width, (int) Position.Y / height);
         public TileStatus GetTileStatus() => Status;
     }
 }
