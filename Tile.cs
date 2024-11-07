@@ -13,19 +13,19 @@ namespace DiscreteStructuresAE2
         public Tile(Texture2D texture, Vector2 position, Color color, Vector2 scale) : base(texture, position, color, scale, 0)
         {
         }
-        public override void Update(Vector2 offset, Color color, Vector2 position)
+        public override void Update(Vector2 offset, Color color, Vector2 boardPosition)
         {
             if (Hitbox.Contains(InputManager.MousePosition() - offset) && InputManager.CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
                 if (color == Color.Red && !InputManager.EndNode.Created)
                 {
                     InputManager.EndNode.Created = true;
-                    InputManager.EndNode.Position = position;
+                    InputManager.EndNode.Position = boardPosition;
                 }
                 else if (color == Color.LimeGreen && !InputManager.StartNode.Created)
                 {
                     InputManager.StartNode.Created = true;
-                    InputManager.StartNode.Position = position;
+                    InputManager.StartNode.Position = boardPosition;
                 }
                 Color = color;
             }
