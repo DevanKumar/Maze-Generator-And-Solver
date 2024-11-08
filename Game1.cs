@@ -28,7 +28,7 @@ namespace DiscreteStructuresAE2
         protected override void Initialize()
         {
             graphics.PreferredBackBufferWidth = 1200;
-            graphics.PreferredBackBufferHeight = 800;
+            graphics.PreferredBackBufferHeight = 850;
             graphics.ApplyChanges();
             InputManager.NewColor = Color.White;
             InputManager.Generated = false;
@@ -50,13 +50,13 @@ namespace DiscreteStructuresAE2
             var generatePixel = new Texture2D(GraphicsDevice, 1, 1);
             generatePixel.SetData(new Color[] { Color.LightPink });
 
-            startSelector = new Selector(startPixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 0), Color.LimeGreen, new Vector2(50, 50));
-            endSelector = new Selector(endPixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 80), Color.Red, new Vector2(50, 50));
-            eraseSelector = new Selector(erasePixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 160), Color.White, new Vector2(50, 50));
+            startSelector = new Selector(startPixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 25), Color.LimeGreen, new Vector2(50, 50));
+            endSelector = new Selector(endPixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 105), Color.Red, new Vector2(50, 50));
+            eraseSelector = new Selector(erasePixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 185), Color.White, new Vector2(50, 50));
 
-            generateButton = new GenerateButton(generatePixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 740), Color.LightPink, new Vector2(50, 50));
+            generateButton = new GenerateButton(generatePixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 770), Color.LightPink, new Vector2(50, 50));
 
-            grid = new Grid(5, 5, gridPixel, new Vector2(25, 0), new Vector2(20, 20));
+            grid = new Grid(40, 40, gridPixel, new Vector2(25, 25), new Vector2(20, 20));
         }
 
         protected override void Update(GameTime gameTime)
@@ -102,6 +102,10 @@ namespace DiscreteStructuresAE2
                     Point endVertex = generateButton.DijkstraPath[i + 1].Value;
                     Vector2 edgeEnd = new Vector2(grid.Board[endVertex.X, endVertex.Y].Position.X + (grid.TileSize.X / 2) + grid.Offset.X, grid.Board[endVertex.X, endVertex.Y].Position.Y + (grid.TileSize.Y / 2) + grid.Offset.Y);
                     spriteBatch.DrawLine(edgeStart, edgeEnd, Color.DarkBlue);
+                }
+                foreach(Rectangle currWall in generateButton.Walls)
+                {
+                    spriteBatch.DrawRectangle(new Rectangle(currWall.X + (int)grid.Offset.X, currWall.Y + (int)grid.Offset.Y, currWall.Width, currWall.Height), Color.Pink);
                 }
             }
             spriteBatch.End();
