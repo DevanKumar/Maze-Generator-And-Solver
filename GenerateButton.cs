@@ -28,13 +28,13 @@ namespace DiscreteStructuresAE2
                 Color = Color.Black;
                 InputManager.Generated = true;
                 var tileVerticies = new Dictionary<Point, Vertex<Point>>();
-                Graph<Point> graph = new Graph<Point>();
                 foreach (var tile in tiles)
                 {
                     Vertex<Point> currVertex = new Vertex<Point>(tile.GetPosition((int)tileSize.X, (int)tileSize.Y));
                     tileVerticies.Add(currVertex.Value, currVertex);
                     Graph.AddVertex(currVertex);
                 }
+                UnionFind unionFind = new UnionFind(Graph.Vertices.Count);
                 foreach ((Point point, Vertex<Point> vertex) in tileVerticies)
                 {
                     foreach (var neighbor in GenerateNeighbors(tiles, point))

@@ -99,7 +99,7 @@ namespace DiscreteStructuresAE2
             edges.Remove(x);
             return true;
         }
-        public List<Vertex<T>> Dijkstra(Vertex<T> start, Vertex<T> end) // enqueued doesn't seem to be doing anything
+        public List<Vertex<T>> Dijkstra(Vertex<T> start, Vertex<T> end)
         {
             if (start == end)
             {
@@ -152,7 +152,7 @@ namespace DiscreteStructuresAE2
                 curr = info[curr].previous;
             }
             while (stack.Count > 0)
-            {
+            {   
                 list.Add(stack.Pop());
             }
             return list;
