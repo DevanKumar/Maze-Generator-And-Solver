@@ -34,7 +34,16 @@ namespace DiscreteStructuresAE2
                     tileVerticies.Add(currVertex.Value, currVertex);
                     Graph.AddVertex(currVertex);
                 }
-                UnionFind unionFind = new UnionFind(Graph.Vertices.Count);
+                UnionFind<Vertex<Point>> unionFind = new UnionFind<Vertex<Point>>(Graph.Vertices);
+                Vertex<Point> startNode = Graph.Find(new Point((int)InputManager.StartNode.Position.X, (int)InputManager.StartNode.Position.Y));
+                Vertex<Point> endNode = Graph.Find(new Point((int)InputManager.EndNode.Position.X, (int)InputManager.EndNode.Position.Y));
+                Random gen = new Random();
+                while (!unionFind.Connected(startNode, endNode))
+                {
+                    int firstNode = gen.Next(0, Graph.Vertices.Count);
+                    int secondNode = gen.Next(0, Graph.Vertices.Count);
+                    unionFind.Union(firstNode, secondNode);
+                }
                 foreach ((Point point, Vertex<Point> vertex) in tileVerticies)
                 {
                     foreach (var neighbor in GenerateNeighbors(tiles, point))
@@ -42,8 +51,6 @@ namespace DiscreteStructuresAE2
                         Graph.AddEdge(vertex, tileVerticies[neighbor], 1);
                     }
                 }
-                Vertex<Point> startNode = Graph.Find(new Point((int)InputManager.StartNode.Position.X, (int)InputManager.StartNode.Position.Y));
-                Vertex<Point> endNode = Graph.Find(new Point((int)InputManager.EndNode.Position.X, (int)InputManager.EndNode.Position.Y));
                 DijkstraPath = Graph.Dijkstra(startNode, endNode);
             }
             else

@@ -11,7 +11,7 @@ namespace DiscreteStructuresAE2
         public int[] ID { get; private set; }
         public Dictionary<T, int> Parent { get; private set; }
         private int[] Size;
-        public UnionFind(List<T> Data)
+        public UnionFind(IReadOnlyList<T> Data)
         {
             ID = new int[Data.Count];
             Size = new int[Data.Count];
@@ -37,18 +37,19 @@ namespace DiscreteStructuresAE2
         {
             int pParent = Find(p);
             int qParent = Find(q);
-            if (Size[pParent] < qParent)
+            if (Size[pParent] < Size[qParent])
             {
                 ID[pParent] = qParent;
-                Size[pParent] += Size[qParent];
-            }
-            else{
-                ID[qParent] = p;
                 Size[qParent] += Size[pParent];
+            }
+            else
+            {
+                ID[qParent] = pParent;
+                Size[pParent] += Size[qParent];
             }
         }
         public void Union(T p, T q) => Union(Parent[p], Parent[q]);
-        public bool Connected(int p, int q) => ID[p] == ID[q];
+        public bool Connected(int p, int q) => Find(ID[p]) == Find(ID[q]);
         public bool Connected(T p, T q) => Connected(Parent[p], Parent[q]);
         public T GetParent(T p) => Parent.Keys.ElementAt(Find(Parent[p]));
     }
