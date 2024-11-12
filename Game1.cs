@@ -56,7 +56,7 @@ namespace DiscreteStructuresAE2
 
             generateButton = new GenerateButton(generatePixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 770), Color.LightPink, new Vector2(50, 50));
 
-            grid = new Grid(40, 40, gridPixel, new Vector2(25, 25), new Vector2(20, 20));
+            grid = new Grid(10, 10, gridPixel, new Vector2(25, 25), new Vector2(20, 20));
         }
 
         protected override void Update(GameTime gameTime)

@@ -52,59 +52,69 @@ namespace DiscreteStructuresAE2
         private void GenerateMaze(Tile[,] tiles, Vector2 tileSize)
         {
             Graph = new Graph<Point>();
+            Graph<Point> algorithmGraph = new Graph<Point>();
             DijkstraPath = new List<Vertex<Point>>();
             Walls = new List<Rectangle>();
-            var tileVerticies = new Dictionary<Point, Vertex<Point>>();
+            Dictionary<Point, Vertex<Point>> tileVerticies = new Dictionary<Point, Vertex<Point>>();
             foreach (var tile in tiles)
             {
                 Vertex<Point> currVertex = new Vertex<Point>(tile.GetPosition((int)tileSize.X, (int)tileSize.Y));
                 tileVerticies.Add(currVertex.Value, currVertex);
+                algorithmGraph.AddVertex(currVertex);
                 Graph.AddVertex(currVertex);
             }
-            UnionFind = new UnionFind<Vertex<Point>>(Graph.Vertices);
-            Vertex<Point> startNode = Graph.Find(new Point((int)InputManager.StartNode.Position.X, (int)InputManager.StartNode.Position.Y));
-            Vertex<Point> endNode = Graph.Find(new Point((int)InputManager.EndNode.Position.X, (int)InputManager.EndNode.Position.Y));
-            Random gen = new Random();
-            while (!UnionFind.Connected(startNode, endNode))
-            {
-                int firstNode = gen.Next(0, Graph.Vertices.Count);
-                int secondNode = gen.Next(0, Graph.Vertices.Count);
-                UnionFind.Union(firstNode, secondNode);
-            }
+            UnionFind = new UnionFind<Vertex<Point>>(algorithmGraph.Vertices);
             foreach ((Point point, Vertex<Point> vertex) in tileVerticies)
             {
                 foreach (var neighbor in GenerateNeighbors(tiles, point))
                 {
-                    if (UnionFind.Connected(vertex, tileVerticies[neighbor]))
-                    {
-                        Graph.AddEdge(vertex, tileVerticies[neighbor], 1);
-                    }
-                    else if (neighbor.X == point.X - 1)
-                    {
-                        Tile currTile = tiles[point.X, point.Y];
-                        Rectangle wall = new Rectangle((int)currTile.Position.X, (int)currTile.Position.Y, 2, (int)currTile.Scale.Y);
-                        Walls.Add(wall);
-                    }
-                    else if (neighbor.X == point.X + 1)
-                    {
-                        Tile currTile = tiles[point.X, point.Y];
-                        Rectangle wall = new Rectangle((int)currTile.Position.X + (int)currTile.Scale.X, (int)currTile.Position.Y, 2, (int)currTile.Scale.Y);
-                        Walls.Add(wall);
-                    }
-                    else if (neighbor.Y == point.Y - 1)
-                    {
-                        Tile currTile = tiles[point.X, point.Y];
-                        Rectangle wall = new Rectangle((int)currTile.Position.X, (int)currTile.Position.Y, (int)currTile.Scale.X, 2);
-                        Walls.Add(wall);
-                    }
-                    else
-                    {
-                        Tile currTile = tiles[point.X, point.Y];
-                        Rectangle wall = new Rectangle((int)currTile.Position.X, (int)currTile.Position.Y + (int)currTile.Scale.Y, (int)currTile.Scale.X, 2);
-                        Walls.Add(wall);
-                    }
+                    algorithmGraph.AddEdge(vertex, tileVerticies[neighbor], 1);
                 }
             }
+            Random gen = new Random();
+            while (UnionFind.NumOfSets > 1)
+            {
+                int edgeToUnion = gen.Next(0, algorithmGraph.Edges.Count);
+                Vertex<Point> firstNode = algorithmGraph.Edges[edgeToUnion].StartingPoint;
+                Vertex<Point> secondNode = algorithmGraph.Edges[edgeToUnion].EndingPoint;
+                if(!UnionFind.Connected(firstNode, secondNode))
+                {
+                    UnionFind.Union(UnionFind.GetParent(firstNode), UnionFind.GetParent(secondNode));
+                    algorithmGraph.RemoveEdge(firstNode, secondNode);
+                    algorithmGraph.RemoveEdge(secondNode, firstNode);
+                    Graph.AddEdge(firstNode, secondNode, 1);
+                   // Graph.AddEdge(secondNode, firstNode, 1);
+                }
+            }
+            foreach (Edge<Point> edge in algorithmGraph.Edges)
+            {
+                if (edge.StartingPoint.Value.X == edge.EndingPoint.Value.X + 1)
+                {
+                    Tile currTile = tiles[edge.StartingPoint.Value.X, edge.StartingPoint.Value.Y];
+                    Rectangle wall = new Rectangle((int)currTile.Position.X, (int)currTile.Position.Y, 2, (int)currTile.Scale.Y);
+                    Walls.Add(wall);
+                }
+                else if (edge.StartingPoint.Value.X == edge.EndingPoint.Value.X - 1)
+                {
+                    Tile currTile = tiles[edge.StartingPoint.Value.X, edge.StartingPoint.Value.Y];
+                    Rectangle wall = new Rectangle((int)currTile.Position.X + (int)currTile.Scale.X, (int)currTile.Position.Y, 2, (int)currTile.Scale.Y);
+                    Walls.Add(wall);
+                }
+                else if (edge.StartingPoint.Value.Y == edge.EndingPoint.Value.Y + 1)
+                {
+                    Tile currTile = tiles[edge.StartingPoint.Value.X, edge.StartingPoint.Value.Y];
+                    Rectangle wall = new Rectangle((int)currTile.Position.X, (int)currTile.Position.Y, (int)currTile.Scale.X, 2);
+                    Walls.Add(wall);
+                }
+                else
+                {
+                    Tile currTile = tiles[edge.StartingPoint.Value.X, edge.StartingPoint.Value.Y];
+                    Rectangle wall = new Rectangle((int)currTile.Position.X, (int)currTile.Position.Y + (int)currTile.Scale.Y, (int)currTile.Scale.X, 2);
+                    Walls.Add(wall);
+                }
+            }
+            Vertex<Point> startNode = algorithmGraph.Find(new Point((int)InputManager.StartNode.Position.X, (int)InputManager.StartNode.Position.Y));
+            Vertex<Point> endNode = algorithmGraph.Find(new Point((int)InputManager.EndNode.Position.X, (int)InputManager.EndNode.Position.Y));
             DijkstraPath = Graph.Dijkstra(startNode, endNode);
             if (DijkstraPath == null)
             {
