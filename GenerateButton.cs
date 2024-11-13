@@ -12,7 +12,7 @@ namespace DiscreteStructuresAE2
     internal class GenerateButton : Sprite
     {
         public List<Vertex<Point>> DijkstraPath { get; private set; }
-        public Graph<Point> Graph { get; private set; }
+        public Graph<Point> MazePaths { get; private set; }
         public UnionFind<Vertex<Point>> UnionFind { get; private set; }
         public List<Rectangle> Walls { get; private set; }
         private Color OrigColor;
@@ -51,17 +51,18 @@ namespace DiscreteStructuresAE2
         }
         private void GenerateMaze(Tile[,] tiles, Vector2 tileSize)
         {
-            Graph = new Graph<Point>();
+            MazePaths = new Graph<Point>();
             Graph<Point> algorithmGraph = new Graph<Point>();
             DijkstraPath = new List<Vertex<Point>>();
             Walls = new List<Rectangle>();
             Dictionary<Point, Vertex<Point>> tileVerticies = new Dictionary<Point, Vertex<Point>>();
             foreach (var tile in tiles)
             {
-                Vertex<Point> currVertex = new Vertex<Point>(tile.GetPosition((int)tileSize.X, (int)tileSize.Y));
-                tileVerticies.Add(currVertex.Value, currVertex);
-                algorithmGraph.AddVertex(currVertex);
-                Graph.AddVertex(currVertex);
+                Vertex<Point> algorithmVertex = new Vertex<Point>(tile.GetPosition((int)tileSize.X, (int)tileSize.Y));
+                tileVerticies.Add(algorithmVertex.Value, algorithmVertex);
+                algorithmGraph.AddVertex(algorithmVertex);
+                Vertex<Point> mazeVertex = new Vertex<Point>(tile.GetPosition((int)tileSize.X, (int)tileSize.Y));
+                MazePaths.AddVertex(mazeVertex);
             }
             UnionFind = new UnionFind<Vertex<Point>>(algorithmGraph.Vertices);
             foreach ((Point point, Vertex<Point> vertex) in tileVerticies)
@@ -82,8 +83,10 @@ namespace DiscreteStructuresAE2
                     UnionFind.Union(UnionFind.GetParent(firstNode), UnionFind.GetParent(secondNode));
                     algorithmGraph.RemoveEdge(firstNode, secondNode);
                     algorithmGraph.RemoveEdge(secondNode, firstNode);
-                    Graph.AddEdge(firstNode, secondNode, 1);
-                   // Graph.AddEdge(secondNode, firstNode, 1);
+                    Vertex<Point> mazeFirstNode = MazePaths.Find(firstNode.Value);
+                    Vertex<Point> mazeSecondNode = MazePaths.Find(secondNode.Value);
+                    MazePaths.AddEdge(mazeFirstNode, mazeSecondNode, 1);
+                    MazePaths.AddEdge(mazeSecondNode, mazeFirstNode, 1);
                 }
             }
             foreach (Edge<Point> edge in algorithmGraph.Edges)
@@ -113,9 +116,9 @@ namespace DiscreteStructuresAE2
                     Walls.Add(wall);
                 }
             }
-            Vertex<Point> startNode = algorithmGraph.Find(new Point((int)InputManager.StartNode.Position.X, (int)InputManager.StartNode.Position.Y));
-            Vertex<Point> endNode = algorithmGraph.Find(new Point((int)InputManager.EndNode.Position.X, (int)InputManager.EndNode.Position.Y));
-            DijkstraPath = Graph.Dijkstra(startNode, endNode);
+            Vertex<Point> startNode = MazePaths.Find(new Point((int)InputManager.StartNode.Position.X, (int)InputManager.StartNode.Position.Y));
+            Vertex<Point> endNode = MazePaths.Find(new Point((int)InputManager.EndNode.Position.X, (int)InputManager.EndNode.Position.Y));
+            DijkstraPath = MazePaths.Dijkstra(startNode, endNode);
             if (DijkstraPath == null)
             {
                 GenerateMaze(tiles, tileSize);

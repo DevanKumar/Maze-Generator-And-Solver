@@ -56,7 +56,7 @@ namespace DiscreteStructuresAE2
 
             generateButton = new GenerateButton(generatePixel, new Vector2(GraphicsDevice.Viewport.Width - 60, 770), Color.LightPink, new Vector2(50, 50));
 
-            grid = new Grid(10, 10, gridPixel, new Vector2(25, 25), new Vector2(20, 20));
+            grid = new Grid(40, 40, gridPixel, new Vector2(25, 25), new Vector2(20, 20));
         }
 
         protected override void Update(GameTime gameTime)
@@ -101,11 +101,11 @@ namespace DiscreteStructuresAE2
                     Vector2 edgeStart = new Vector2(grid.Board[startVertex.X, startVertex.Y].Position.X + (grid.TileSize.X / 2) + grid.Offset.X, grid.Board[startVertex.X, startVertex.Y].Position.Y + (grid.TileSize.Y / 2) + grid.Offset.Y);
                     Point endVertex = generateButton.DijkstraPath[i + 1].Value;
                     Vector2 edgeEnd = new Vector2(grid.Board[endVertex.X, endVertex.Y].Position.X + (grid.TileSize.X / 2) + grid.Offset.X, grid.Board[endVertex.X, endVertex.Y].Position.Y + (grid.TileSize.Y / 2) + grid.Offset.Y);
-                    spriteBatch.DrawLine(edgeStart, edgeEnd, Color.DarkBlue);
+                    spriteBatch.DrawLine(edgeStart, edgeEnd, Color.Pink);
                 }
                 foreach(Rectangle currWall in generateButton.Walls)
                 {
-                    spriteBatch.DrawRectangle(new Rectangle(currWall.X + (int)grid.Offset.X, currWall.Y + (int)grid.Offset.Y, currWall.Width, currWall.Height), Color.Pink);
+                    spriteBatch.DrawRectangle(new Rectangle(currWall.X + (int)grid.Offset.X, currWall.Y + (int)grid.Offset.Y, currWall.Width, currWall.Height), Color.Black);
                 }
             }
             spriteBatch.End();
