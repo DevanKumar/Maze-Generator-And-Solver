@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace DiscreteStructuresAE2
 {
+    // The Grid class is used to make the interactive grid of Tiles that is
+    // the foundation for my maze generation and solving algorithms
     internal class Grid
     { 
         public Tile[,] Board { get; private set; }
@@ -24,6 +23,9 @@ namespace DiscreteStructuresAE2
                 }
             }
         }
+
+        // Update updates every tile within the grid and checks to see
+        // if a start or end node has been placed
         public void Update()
         {
             for (int col = 0; col < Board.GetLength(0); col++)
@@ -49,6 +51,7 @@ namespace DiscreteStructuresAE2
             }
         }
 
+        // Draw draws every tile in the grid
         public void Draw(SpriteBatch spriteBatch)
         {
             for (int row = 0; row < Board.GetLength(0); row++)

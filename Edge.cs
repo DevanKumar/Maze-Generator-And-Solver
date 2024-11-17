@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DiscreteStructuresAE2
+﻿namespace DiscreteStructuresAE2
 {
+    // Edge class for my graph implementation which stores its starting and
+    // end vertices, and its weight (distance)
     internal class Edge<T>
     {
         public Vertex<T> StartingPoint {  get; set; }

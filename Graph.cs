@@ -1,17 +1,15 @@
-﻿using DiscreteStructuresAE2;
-using Microsoft.Xna.Framework;
-using SharpDX.Direct2D1.Effects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DiscreteStructuresAE2
 {
+    // Below is my implementation of a Directed Graph that also has an
+    // implementation for Dijkstra's path finding algorithm
     internal class Graph<T>
     {
+        // vertices is a list of all vertices in the graph
         private List<Vertex<T>> vertices;
+
+        // edges is a list off all edges in the graph
         private List<Edge<T>> edges;
         public IReadOnlyList<Vertex<T>> Vertices => vertices;
         public IReadOnlyList<Edge<T>> Edges => edges;
@@ -22,6 +20,9 @@ namespace DiscreteStructuresAE2
             vertices = new List<Vertex<T>>();
             edges = new List<Edge<T>>();
         }
+
+        // given a value, Find will return the correlating Vertex and if none
+        // exists it will return null
         public Vertex<T> Find(T value)
         {
             foreach (Vertex<T> currVertex in vertices)
@@ -33,21 +34,26 @@ namespace DiscreteStructuresAE2
             }
             return null;
         }
-        public Edge<T> GetEdge(Vertex<T> a, Vertex<T> b)
+
+        // given a start and end vertex, GetEdge will find and return the edge
+        // that connects the two, if none exists it will return null
+        public Edge<T> GetEdge(Vertex<T> start, Vertex<T> end)
         {
-            if (a == null || b == null)
+            if (start == null || end == null)
             {
                 return null;
             }
-            for (int i = 0; i < a.NeighborCount; i++)
+            for (int i = 0; i < start.NeighborCount; i++)
             {
-                if (a.Neighbors[i].EndingPoint == b)
+                if (start.Neighbors[i].EndingPoint == end)
                 {
-                    return a.Neighbors[i];
+                    return start.Neighbors[i];
                 }
             }
             return null;
         }
+
+        // AddVertex will add the given vertex to the graph
         public void AddVertex(Vertex<T> vertex)
         {
             if (vertex == null || vertex.NeighborCount > 0 || vertices.Contains(vertex))
@@ -56,6 +62,9 @@ namespace DiscreteStructuresAE2
             }
             vertices.Add(vertex);
         }
+        
+        // RemoveVertex will remove the given vertex from the graph, severing all
+        // connections to it in the process
         public bool RemoveVertex(Vertex<T> vertex)
         {
             if (!vertices.Contains(vertex))
@@ -73,32 +82,42 @@ namespace DiscreteStructuresAE2
             vertices.Remove(vertex);
             return true;
         }
-        public bool AddEdge(Vertex<T> a, Vertex<T> b, float distance)
+
+        // Given a start vertex, end vertex, and distance, AddEdge will make a
+        // directed edge connecting the two vertices
+        public bool AddEdge(Vertex<T> start, Vertex<T> end, float distance)
         {
-            if (a == null || b == null || !vertices.Contains(a) || !vertices.Contains(b))
+            if (start == null || end == null || !vertices.Contains(start) || !vertices.Contains(end))
             {
                 return false;
             }
-            var x = new Edge<T>(a, b, distance);
+            var x = new Edge<T>(start, end, distance);
             edges.Add(x);
-            a.Neighbors.Add(x);
+            start.Neighbors.Add(x);
             return true;
         }
-        public bool RemoveEdge(Vertex<T> a, Vertex<T> b)
+
+        // Given a start and an end vertex, RemoveEdge severes the edge
+        // connecting the two.
+        public bool RemoveEdge(Vertex<T> start, Vertex<T> end)
         {
-            if (a == null || b == null)
+            if (start == null || end == null)
             {
                 return false;
             }
-            var x = GetEdge(a, b);
+            var x = GetEdge(start, end);
             if (x == null)
             {
                 return false;
             }
-            a.Neighbors.Remove(x);
+            start.Neighbors.Remove(x);
             edges.Remove(x);
             return true;
         }
+
+        // Below is my implementation of Dijkstra's path finding algorithm
+        // which will find the shortest path connecting the given start and
+        // end vertices
         public List<Vertex<T>> Dijkstra(Vertex<T> start, Vertex<T> end)
         {
             if (start == end)
@@ -106,7 +125,6 @@ namespace DiscreteStructuresAE2
                 return new List<Vertex<T>>();
             }
             var info = new Dictionary<Vertex<T>, (double distance, Vertex<T> previous, bool visited)>();
-            var enqueued = new HashSet<Vertex<T>>();
             var queue = new PriorityQueue<Vertex<T>, double>();
             Vertex<T> curr;
             for (int i = 0; i < vertices.Count; i++)
@@ -115,22 +133,19 @@ namespace DiscreteStructuresAE2
             }
             info[start] = (0, null, false);
             queue.Enqueue(start, 0);
-            enqueued.Add(start);
 
             while (queue.Count > 0 && !info[end].visited)
             {
                 curr = queue.Dequeue();
-                enqueued.Remove(curr);
                 foreach (var currNeighbor in curr.Neighbors)
                 {
                     if (info[currNeighbor.EndingPoint].distance > currNeighbor.Distance + info[curr].distance)
                     {
                         info[currNeighbor.EndingPoint] = (currNeighbor.Distance + info[curr].distance, curr, false);
                     }
-                    if (!info[currNeighbor.EndingPoint].visited && !enqueued.Contains(currNeighbor.EndingPoint))
+                    if (!info[currNeighbor.EndingPoint].visited)
                     {
                         queue.Enqueue(currNeighbor.EndingPoint, info[currNeighbor.EndingPoint].distance);
-                        enqueued.Add(currNeighbor.EndingPoint);
                     }
                 }
                 info[curr] = (info[curr].distance, info[curr].previous, true);
@@ -141,6 +156,9 @@ namespace DiscreteStructuresAE2
             }
             return EndOfDijkstra(start, end, info);
         }
+
+        // Below is a helper function for my implementation of Dijkstra's Algorithm
+        // that converts the path generated by the algorithm into a list of vertices
         private List<Vertex<T>> EndOfDijkstra(Vertex<T> start, Vertex<T> end, Dictionary<Vertex<T>, (double distance, Vertex<T> previous, bool visited)> info)
         {
             var curr = end;

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DiscreteStructuresAE2
+﻿namespace DiscreteStructuresAE2
 {
+    // TileStatus is an enum that helps me keep track of the current state of a
+    // node (Tile) in the grid
     public enum TileStatus
     {
         START,

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DiscreteStructuresAE2
 {
+    // Vertex class for my graph implementation, stores its value along
+    // with all of its edge connections.
     internal class Vertex<T>
     {
         public T Value { get; set; }

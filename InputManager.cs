@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DiscreteStructuresAE2
 {
+    // InputManager is a static class that holds information or helper
+    // functions that have global importance/use
     internal static class InputManager
     {
         public struct PointNode
